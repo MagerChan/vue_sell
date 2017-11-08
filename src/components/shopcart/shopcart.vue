@@ -1,6 +1,6 @@
 <template>
 	<div class="shopcart">
-		<div class="content">
+		<div class="content" @click="toggleList">
 			<div class="content-left">
 				<div class="logo-wrapper">
 					<div class="logo" :class="{'highlight':totalCount>0}">
@@ -24,25 +24,28 @@
 				</div>
 			</transition>
 		</div>
-		<div class="shopcart-list" v-show="listShow">
-			<div class="lsit-header">
-				<h1 class="title">购物车</h1>
-				<span class="empty">清空</span>
+		<transition name="fold">
+			<div class="shopcart-list" v-show="listShow">
+				<div class="list-header">
+					<h1 class="title">购物车</h1>
+					<span class="empty">清空</span>
+				</div>
+				<div class="list-content">
+					<ul>
+						<li class="food" v-for="food in selectFoods">
+							<span class="name">{{food.name}}</span>
+							<div class="price">
+								<span>￥{{food.price*food.count}}</span>
+							</div>
+							<div class="cartcontrol-wrapper">
+								<cartcontrol :food="food"></cartcontrol>
+							</div>
+						</li>
+					</ul>
+				</div>
 			</div>
-			<div class="list-content">
-				<ul>
-					<li class="food" v-for="food in selectFoods">
-						<span class="name">{{food.name}}</span>
-						<div class="price">
-							<span>￥{{food.price*food.count}}</span>
-						</div>
-						<div class="cartcontrol-wrapper">
-							<cartcontrol :food="food"></cartcontrol>
-						</div>
-					</li>
-				</ul>
-			</div>
-		</div>
+		</transition>
+		
 	</div>
 </template>
 
@@ -85,7 +88,8 @@
             show: false
           }
         ],
-        dropBalls: []
+        dropBalls: [],
+        fold: true
       };
     },
     computed: {
@@ -119,6 +123,14 @@
         } else {
           return 'enough';
         }
+      },
+      listShow() {
+        if (!this.totalCount > 0) {
+          this.fold = true;
+          return false;
+        }
+        let show = !this.fold;
+        return show;
       }
     },
     methods: {
@@ -168,6 +180,12 @@
           ball.show = false;
           el.style.display = 'none';
         }
+      },
+      toggleList() {
+        if (!this.totalCount) {
+          return;
+        }
+        this.fold = !this.fold;
       }
     },
     components: {
@@ -276,4 +294,34 @@
 					border-radius:50%
 					background:rgb(0,160,220)
 					transition:all 0.4s linear
+		.shopcart-list
+			position:absolute
+			left:0
+			top:0
+			z-index:-1
+			width:100%
+			transition:all 0.5s
+			transform:translate3d(0,-100%,0)
+			&.fold-leave-active
+				transform:translate3d(0,-100%,0)
+			&.fold-enter,&.fold-leave-to
+				transform:translate3d(0,0,0)
+			.list-header
+				height:40px
+				line-height:40px
+				padding:0 18px
+				background:#f3f5f7
+				border-bottom:1px solid rgba(7,17,27,0.1)
+				.title
+					float:left
+					font-size:14px
+					color:rgb(7,17,27)
+				.empty
+					float:right
+					font-size:12px
+					color:rgb(0,160,220)
+			.list-content
+				padding:0 18px
+				max-height:217px
+
 </style>
