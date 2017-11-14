@@ -39,7 +39,7 @@
 			</ul>
 		</div>
 		<shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
-		<food :food="selectedFood" ref="food"></food>
+		<food @add="addFood" :food="selectedFood" ref="food"></food>
 	</div>
 </template>
 
@@ -115,6 +115,9 @@
         }
         this.selectedFood = food;
         this.$refs.food.show();
+      },
+      addFood(target) {
+        this._drop(target);  // 传递 target
       },
       _drop(target) {
         // 体验优化，异步执行下落动画

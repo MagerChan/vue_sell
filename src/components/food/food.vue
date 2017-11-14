@@ -50,7 +50,7 @@
         this.showFlag = true;
         this.$nextTick(() => {
           if (!this.scroll) {
-            this.srcoll = new BScroll(this.$refs.food, {
+            this.scroll = new BScroll(this.$refs.food, {
               click: true
             });
           } else {
@@ -65,7 +65,7 @@
         if (!event._constructed) {
           return;
         }
-        this.$emit('cart-add', event.target);
+        this.$emit('add', event.target);
         Vue.set(this.food, 'count', 1);
       }
     },
