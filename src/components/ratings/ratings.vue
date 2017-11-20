@@ -42,6 +42,9 @@
 									<i class="icon-thumb_up"></i>
 									<span v-for="item in rating.recommend">{{}}</span>
 								</div>
+								<div class="time">
+									{{rating.rateTime | formatDate}}
+								</div>
 							</div>
 						</div>
 					</li>
@@ -55,6 +58,7 @@
   import star from '../star/star';
   import split from '../split/split';
   import ratingselect from '../ratingselect/ratingselect';
+  import {formatDate} from '../../common/js/date';
 
   // const POSITIVE = 0;
   // const NEGATIVE = 1;
@@ -81,6 +85,12 @@
           this.ratings = response.data;
         }
       });
+    },
+    filters: {
+      formatDate(time) {
+        let date = new Date(time);
+        return formatDate(date, 'yyyy-MM-dd hh:mm');
+      }
     },
     components: {
       star,
