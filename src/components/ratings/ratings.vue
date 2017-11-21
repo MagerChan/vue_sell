@@ -1,5 +1,5 @@
 <template>
-	<div class="ratings">
+	<div class="ratings" ref="ratings">
 		<div class="ratings-content">
 			<div class="overview">
 				<div class="overview-left">
@@ -28,19 +28,19 @@
 			<ratingselect :select-type="selectType" :only-content="onlyContent" :ratings="ratings"></ratingselect>
 			<div class="rating-wrapper">
 				<ul>
-					<li v-for="rating in ratings" class="rating-item">
+					<li v-for="rating in ratings" class="rating-item border-1px">
 						<div class="avatar">
-							<img :src="rating.avatar" />
+							<img width="28" height="28" :src="rating.avatar" />
 						</div>
 						<div class="content">
 							<h1 class="name">{{rating.username}}</h1>
 							<div class="star-wrapper">
 								<star :size="24" :score="ratingScore"></star>
-								<span class="delivery" v-show="rating.delivery"></span>{{rating.deliveryTime}}
+								<span class="delivery" v-show="rating.delivery">{{rating.deliveryTime}}</span>
 								<p class="text">{{rating.text}}</p>
 								<div class="recommend" v-show="rating.recommend.length">
 									<i class="icon-thumb_up"></i>
-									<span v-for="item in rating.recommend">{{}}</span>
+									<span v-for="item in rating.recommend">{{item}}</span>
 								</div>
 								<div class="time">
 									{{rating.rateTime | formatDate}}
@@ -59,6 +59,7 @@
   import split from '../split/split';
   import ratingselect from '../ratingselect/ratingselect';
   import {formatDate} from '../../common/js/date';
+  import BScroll from 'better-scroll';
 
   // const POSITIVE = 0;
   // const NEGATIVE = 1;
@@ -83,6 +84,11 @@
         response = response.body;
         if (response.errno === ERR_OK) {
           this.ratings = response.data;
+          this.$nextTick(() => {
+            this.scroll = new BScroll(this.$refs.ratings, {
+              click: true
+            });
+          });
         }
       });
     },
@@ -101,6 +107,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+@import "../../common/styles/mixin.styl";
 .ratings
 	position:absolute
 	top:174px
@@ -168,4 +175,42 @@
 					margin-left:12px
 					font-size:12px
 					color:rgb(147,153,159)
+	.rating-wrapper
+		padding:0 18px
+		.rating-item
+			display:flex
+			padding:18px 0
+			border-1px(rgba(7,17,27,0.1))
+			.avatar
+				flex:0 0 28px
+				width:28px
+				margin-right:12px
+				img
+					border-radius:50%
+			.content
+				position:relative
+				flex:1
+				.name
+					line-height:12px
+					font-size:10px
+					color:rgb(7,17,27)
+					margin-bottom:4px
+				.star-wrapper
+					margin-bottom:6px
+					font-size:0
+					.star
+						display:inline-block
+						margin-right:6px
+						vertical-align:top
+					.delivery
+						display:inline-block
+						margin-right:6px
+						vertical-align:top
+						line-height:12px
+						font-size:10px
+						color:rgb(147,153,159)
+
+
+
+
 </style>
