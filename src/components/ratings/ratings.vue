@@ -25,26 +25,26 @@
 				</div>
 			</div>
 			<split></split>
-			<ratingselect :select-type="selectType" :only-content="onlyContent" :ratings="ratings"></ratingselect>
+			<ratingselect :select-type="selectType" :only-content="onlyContent" :ratings="ratings"  @ratingtype-select="ratingtypeSelect" @content-toggle="contentToggle"></ratingselect>
 			<div class="rating-wrapper">
 				<ul>
-					<li v-for="rating in ratings" class="rating-item border-1px">
+					<li v-for="rating in ratings" v-show="needShow(rating.rateType,rating.text)" class="rating-item border-1px">
 						<div class="avatar">
 							<img width="28" height="28" :src="rating.avatar" />
 						</div>
 						<div class="content">
 							<h1 class="name">{{rating.username}}</h1>
 							<div class="star-wrapper">
-								<star :size="24" :score="ratingScore"></star>
-								<span class="delivery" v-show="rating.delivery">{{rating.deliveryTime}}</span>
-								<p class="text">{{rating.text}}</p>
-								<div class="recommend" v-show="rating.recommend.length">
-									<i class="icon-thumb_up"></i>
-									<span v-for="item in rating.recommend">{{item}}</span>
-								</div>
-								<div class="time">
-									{{rating.rateTime | formatDate}}
-								</div>
+								<star :size="24" :score="rating.score"></star>
+								<span class="delivery" v-show="rating.deliveryTime">{{rating.deliveryTime}}</span>
+							</div>
+							<p class="text">{{rating.text}}</p>
+							<div class="recommend" v-show="rating.recommend.length">
+								<i class="icon-thumb_up"></i>
+								<span v-for="item in rating.recommend" class="item">{{item}}</span>
+							</div>
+							<div class="time">
+								{{rating.rateTime | formatDate}}
 							</div>
 						</div>
 					</li>
@@ -96,6 +96,30 @@
       formatDate(time) {
         let date = new Date(time);
         return formatDate(date, 'yyyy-MM-dd hh:mm');
+      }
+    },
+    methods: {
+      needShow(type, text) {
+        if (this.onlyContent && !text) {
+          return false;
+        }
+        if (this.selectType === ALL) {
+          return true;
+        } else {
+          return type === this.selectType;
+        }
+      },
+      ratingtypeSelect(val) {
+        this.selectType = val;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
+      },
+      contentToggle(val) {
+        this.onlyContent = val;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
       }
     },
     components: {
@@ -209,6 +233,35 @@
 						line-height:12px
 						font-size:10px
 						color:rgb(147,153,159)
+				.text
+					margin-bottom:8px
+					line-height:18px
+					color:rgb(7,17,27)
+					font-size:12px
+				.recommend
+					line-height:16px
+					font-size:0
+					.icon-thumb_up,.item
+						display:inline-block
+						margin:0 8px 4px 0
+						font-size:9px
+					.icon-thumb_up
+						color:rgb(0,160,220)
+					.item
+						padding:0 6px
+						border:1px solid rgba(7,17,27,0.1)
+						border-radius:1px
+						color:rgb(147,153,159)
+						background:#fff
+				.time
+					position:absolute
+					top:0
+					right:0
+					line-height:12px
+					font-size:10px
+					color:rgb(147,153,159)
+					
+
 
 
 
